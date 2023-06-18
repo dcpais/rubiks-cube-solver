@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function createBoxWithRoundedEdges( width, height, depth, radius0, smoothness ) {
+export function createBoxWithRoundedEdges(width, height, depth, radius0, smoothness ) {
     let shape = new THREE.Shape();
     let eps = 0.00001;
     let radius = radius0 - eps;
@@ -21,4 +21,4 @@ export function createBoxWithRoundedEdges( width, height, depth, radius0, smooth
     geometry.center();
     
     return geometry;
-}
+  }
