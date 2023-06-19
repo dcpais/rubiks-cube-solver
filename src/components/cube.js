@@ -11,11 +11,13 @@ const geometry = new THREE.BoxGeometry(cubeLength, cubeLength, cubeLength)
 // Get all axes of rotation
 export function rotate(axisPos, toRotate) {
     
-    const rAngles = axisPos.normalize();
-    for (var i = 0; i < toRotate.length; i++) {
-        const current = toRotate[i];
-        current.rotateX();
+    const normalized = axisPos.normalize();
+    const quaternion = new THREE.Quaternion();
+    quaternion.setFromAxisAngle(normalized, Math.PI / 2);
 
+    for (let cube of toRotate) {
+        let rotatePos = cube.position;
+        rotatePos.applyQuaternion(quaternion);
     }
 
 }

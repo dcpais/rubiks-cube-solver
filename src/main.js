@@ -53,8 +53,7 @@ function init() {
     window.addEventListener('keydown', (event) => onKeyPress(event));
     function onKeyPress(event) {
         console.log("The following key was pressed: " + event.key);
-        console.log(cubeSlices[0])
-        CUBE.rotate(new THREE.Vector3(1, 0, 0), cubeSlices[0]);
+        CUBE.rotate(new THREE.Vector3(0, 0, 1), cubeSlices[0]);
     }
 
     // Mouse click event handler
