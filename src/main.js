@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import * as CUBE from './components/cube.ts'
-import { OrbitControls} from 'three/addons/controls/OrbitControls.js'
+import * as CUBE from './components/cube.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 // Initialise the THREE main objects
 let scene, camera, renderer, controls;
@@ -35,8 +35,8 @@ function init() {
     renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    window.addEventListener( 'resize', onWindowResize, false );
-    function onWindowResize(){
+    window.addEventListener('resize', onWindowResize, false);
+    function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize( window.innerWidth, window.innerHeight );
@@ -48,6 +48,17 @@ function init() {
     );
     controls.minDistance = 4;
     controls.maxDistance = 20;
+
+    // Key press event handler
+    window.addEventListener('keydown', (event) => onKeyPress(event));
+    function onKeyPress(event) {
+        console.log("The following key was pressed: " + event.key);
+        console.log(cubeSlices[0])
+        CUBE.rotate(new THREE.Vector3(1, 0, 0), cubeSlices[0]);
+    }
+
+    // Mouse click event handler
+    
 
     // Start settings
     camera.position.z = 5;
