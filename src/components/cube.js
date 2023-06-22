@@ -12,6 +12,9 @@ const geometry = new THREE.BoxGeometry(cubeLength, cubeLength, cubeLength)
 // Get all axes of rotation
 export function rotate(axisPos, toRotate) {
     
+    if (TWEEN.getAll() != 0) {
+        return;
+    }
     // Quaternion rotation of cube
     const normalized = axisPos.normalize();
     const q1 = new THREE.Quaternion();
@@ -25,9 +28,11 @@ export function rotate(axisPos, toRotate) {
         // with-quaternion-travels-undesired-path/41147/5
         let rotatePos = toRotate[i].position;
         new TWEEN.Tween(rotatePos)
-            .to(rotatePos.clone().applyQuaternion(q1), 1000)
+            .to(rotatePos.clone().applyQuaternion(q1), 200)
             .onUpdate((object, t) => {
-                toRotate[i].quaternion.slerp(q1, 0.1)
+                toRotate[i].quaternion.slerp(q1, 0.1);
+                toRotate[i].lookAt(normalized);
+    
             })
             .start()
     }

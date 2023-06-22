@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 let scene, camera, renderer, controls;
 
 // Initialise App State variables
-let cubeSlices, sceneLight;
+let cubeSlices, sceneLight, testObjs;
 
 // Default Settings
 const config = {
@@ -54,7 +54,8 @@ function init() {
     window.addEventListener('keydown', (event) => onKeyPress(event));
     function onKeyPress(event) {
         console.log("The following key was pressed: " + event.key);
-        CUBE.rotate(new THREE.Vector3(0, 0, 1), cubeSlices[0]);
+        //CUBE.rotate(new THREE.Vector3(0, 0, 1), cubeSlices[0]);
+
     }
 
     // Mouse click event handler
@@ -62,10 +63,27 @@ function init() {
 
     // Start settings
     camera.position.z = 5;
-    cubeSlices = CUBE.generateCube(scene);
+    //cubeSlices = CUBE.generateCube(scene);
     sceneLight = new THREE.PointLight(0xffffff, 1, 100);
     sceneLight.position.set(0, 0, 5); 
     scene.add(sceneLight);
+
+    // TESTING AREA
+    // const xMat = new THREE.LineBasicMaterial({color: '#FF0000'});
+    // const yMat = new THREE.LineBasicMaterial({color: '#00FF00'});
+    // const zMat = new THREE.LineBasicMaterial({color: '#0000FF'});
+
+    // const xGeom = new THREE.BufferGeometry()
+    //     .setFromPoints([[0,0,0], [100,0,0]]);
+    // const yGeom = new THREE.BufferGeometry()
+    //     .setFromPoints([[0,0,0], [0,100,0]]);
+    // const zGeom = new THREE.BufferGeometry()
+    //     .setFromPoints([[0,0,0], [0,0,100]]);
+
+    // const xAxis = new THREE.Line(geometry, a)
+    const axes = new THREE.AxesHelper(5);
+    scene.add(axes);
+
 }
 
 function animate() {
