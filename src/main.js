@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as TWEEN from 'tween.js';
 import * as CUBE from './components/cube.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
@@ -71,6 +72,8 @@ function animate() {
 
     requestAnimationFrame(animate);
     
+    TWEEN.update();
+
     renderer.render(scene, camera);
 
 }

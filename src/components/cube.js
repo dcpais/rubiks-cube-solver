@@ -1,5 +1,6 @@
 // Imports
 import * as THREE from 'three';
+import * as TWEEN from 'tween.js';
 import { createBoxWithRoundedEdges } from './roundbox';
 
 // Rubiks Cube Defaults
@@ -13,15 +14,22 @@ export function rotate(axisPos, toRotate) {
     
     // Quaternion rotation of cube
     const normalized = axisPos.normalize();
-    const quaternion = new THREE.Quaternion();
-    quaternion.setFromAxisAngle(normalized, Math.PI / 2);
+    const q1 = new THREE.Quaternion();
+    q1.setFromAxisAngle(normalized, Math.PI / 2);
 
     for (let i = 0; i < toRotate.length; i++) {
+        
+        // Animate quaternion movement
+        // Sourced from: 
+        // https://discourse.threejs.org/t/camera-animation-
+        // with-quaternion-travels-undesired-path/41147/5
         let rotatePos = toRotate[i].position;
-        rotatePos.applyQuaternion(quaternion);
-
-        // Animate quaternion
-
+        new TWEEN.Tween(rotatePos)
+            .to(rotatePos.clone().applyQuaternion(q1), 1000)
+            .onUpdate((object, t) => {
+                toRotate[i].quaternion.slerp(q1, 0.1)
+            })
+            .start()
     }
 
 }
