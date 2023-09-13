@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as TWEEN from 'tween.js';
 import * as CUBE from './components/cube.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { TetrahedronBufferGeometry } from 'three';
 
 // Initialise the THREE main objects
 let scene, camera, renderer, controls;
@@ -11,7 +12,7 @@ let cubeSlices, sceneLight, testObjs;
 
 // Default Settings
 const config = {
-    background_color: '#FFFFFF',
+    background_color: '#F5F5F5',
     fov: 75,
 }
 
@@ -54,8 +55,7 @@ function init() {
     window.addEventListener('keydown', (event) => onKeyPress(event));
     function onKeyPress(event) {
         console.log("The following key was pressed: " + event.key);
-        //CUBE.rotate(new THREE.Vector3(0, 0, 1), cubeSlices[0]);
-
+        CUBE.rotate(new THREE.Vector3(0, 0, 1), [cube]);
     }
 
     // Mouse click event handler
@@ -64,25 +64,64 @@ function init() {
     // Start settings
     camera.position.z = 5;
     //cubeSlices = CUBE.generateCube(scene);
-    sceneLight = new THREE.PointLight(0xffffff, 1, 100);
-    sceneLight.position.set(0, 0, 5); 
+    sceneLight = new THREE.AmbientLight(0xffffff);
     scene.add(sceneLight);
 
-    // TESTING AREA
-    // const xMat = new THREE.LineBasicMaterial({color: '#FF0000'});
-    // const yMat = new THREE.LineBasicMaterial({color: '#00FF00'});
-    // const zMat = new THREE.LineBasicMaterial({color: '#0000FF'});
+    /**
+     * TESTING AREA!!!!
+     * 
+     * Working on getting the cube rotation and
+     * face colours implemented correctly
+     * before applying to all the cubes. 
+     * 
+     * Will also plan out how the rotation axes 
+     * will be laid out, as well as the cubes of each
+     * face.
+     * 
+     * PLAN: 
+     * - Design a cube as 1 white cube with seperate
+     *      objects representing the faces? will be 
+     * - easier to keep track of for actual game logic?
+     *
+     */
 
-    // const xGeom = new THREE.BufferGeometry()
-    //     .setFromPoints([[0,0,0], [100,0,0]]);
-    // const yGeom = new THREE.BufferGeometry()
-    //     .setFromPoints([[0,0,0], [0,100,0]]);
-    // const zGeom = new THREE.BufferGeometry()
-    //     .setFromPoints([[0,0,0], [0,0,100]]);
 
-    // const xAxis = new THREE.Line(geometry, a)
-    const axes = new THREE.AxesHelper(5);
-    scene.add(axes);
+    // Define the colors for each face of the cube
+    const colors = [
+        0xff0000, // Red
+        0x00ff00, // Green
+        0x0000ff, // Blue
+        0xffff00, // Yellow
+        0xff00ff, // Magenta
+        0x00ffff, // Cyan
+    ];
+
+    // Create an array of materials for each face
+    const materials = colors.map(color => new THREE.MeshStandardMaterial({ color }));
+
+    // Create a cube geometry
+    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+
+    // Create a mesh for the cube using the cube geometry and materials
+    const cube = new THREE.Mesh(cubeGeometry, materials);
+
+    // Add the cube to the scene
+    scene.add(cube);
+
+
+
+    // const axes = new THREE.AxesHelper(5);
+    // scene.add(axes);
+
+    // const cMat = new THREE.MeshToonMaterial({color: "#FF0000"})
+    // const cGeom = new THREE.BoxGeometry(1, 1, 1);
+    // const cube = new THREE.Mesh(cGeom, cMat);
+    // scene.add(cube);
+
+    // // Cube defaults
+    // cube.position.set(1, 1, 0);
+    
+    // new TWEEN.Tween()
 
 }
 

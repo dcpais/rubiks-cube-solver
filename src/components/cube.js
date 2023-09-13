@@ -18,23 +18,15 @@ export function rotate(axisPos, toRotate) {
     // Quaternion rotation of cube
     const normalized = axisPos.normalize();
     const q1 = new THREE.Quaternion();
-    q1.setFromAxisAngle(normalized, Math.PI / 2);
+    q1.setFromAxisAngle(normalized, (Math.PI / 2));
 
     for (let i = 0; i < toRotate.length; i++) {
-        
         // Animate quaternion movement
         // Sourced from: 
         // https://discourse.threejs.org/t/camera-animation-
         // with-quaternion-travels-undesired-path/41147/5
-        let rotatePos = toRotate[i].position;
-        new TWEEN.Tween(rotatePos)
-            .to(rotatePos.clone().applyQuaternion(q1), 200)
-            .onUpdate((object, t) => {
-                toRotate[i].quaternion.slerp(q1, 0.1);
-                toRotate[i].lookAt(normalized);
-    
-            })
-            .start()
+        // Create a rotation Tween
+
     }
 
 }
@@ -46,7 +38,7 @@ export function generateCube(scene) {
     for (let i = 0; i < cubeDimensions; i++) {
         let slice = [];
         for (let j = 0; j < cubeDimensions; j++) {
-            const material = new THREE.MeshToonMaterial({color: 0x00ff00});
+            const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
             for (let k = 0; k < cubeDimensions; k++) {
                 const newCube = new THREE.Mesh(geometry, material);
                 let z = i * (cubeLength + cubeGap) - cubeLength - cubeGap;
