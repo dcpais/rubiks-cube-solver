@@ -3,6 +3,7 @@ import * as TWEEN from 'tween.js';
 import * as CUBE from './components/cube.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { TetrahedronBufferGeometry } from 'three';
+import { createBoxWithRoundedEdges } from './components/roundbox.js';
 
 // Initialise the THREE main objects
 let scene, camera, renderer, controls;
@@ -89,7 +90,7 @@ function init() {
     // Define the colors for each face of the cube
     const colors = [
         0xff0000, // Red
-        0x00ff00, // Green
+        0x000000, // Green
         0x0000ff, // Blue
         0xffff00, // Yellow
         0xff00ff, // Magenta
@@ -100,7 +101,7 @@ function init() {
     const materials = colors.map(color => new THREE.MeshStandardMaterial({ color }));
 
     // Create a cube geometry
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const cubeGeometry = new createBoxWithRoundedEdges(1, 1, 1, 0.04, 1);
 
     // Create a mesh for the cube using the cube geometry and materials
     const cube = new THREE.Mesh(cubeGeometry, materials);
