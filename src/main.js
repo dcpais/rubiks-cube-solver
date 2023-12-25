@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as TWEEN from 'tween.js';
-import * as CUBE from './components/cube.js'
+import * as CUBE from './components/rubikscube.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { TetrahedronBufferGeometry } from 'three';
 import { createBoxWithRoundedEdges } from './components/roundbox.js';
@@ -17,10 +17,11 @@ const config = {
     fov: 75,
 }
 
-init();
+initScene();
 animate();
+run();
 
-function init() {
+function initScene() {
 
     // Scene Setup
     scene = new THREE.Scene();
@@ -57,17 +58,15 @@ function init() {
     function onKeyPress(event) {
         console.log("The following key was pressed: " + event.key);
         CUBE.rotate(new THREE.Vector3(0, 0, 1), [cube]);
-    }
-
-    // Mouse click event handler
-    
+    }    
 
     // Start settings
     camera.position.z = 5;
-    //cubeSlices = CUBE.generateCube(scene);
     sceneLight = new THREE.AmbientLight(0xffffff);
     scene.add(sceneLight);
+}
 
+function run() {
     /**
      * TESTING AREA!!!!
      * 
@@ -86,7 +85,6 @@ function init() {
      *
      */
 
-
     // Define the colors for each face of the cube
     const colors = [
         0xff0000, // Red
@@ -99,41 +97,29 @@ function init() {
 
     // Create an array of materials for each face
     const materials = colors.map(color => new THREE.MeshStandardMaterial({ color }));
-
-    // Create a cube geometry
-    const cubeGeometry = new createBoxWithRoundedEdges(1, 1, 1, 0.04, 1);
-
-    // Create a mesh for the cube using the cube geometry and materials
-    const cube = new THREE.Mesh(cubeGeometry, materials);
-
-    // Add the cube to the scene
-    scene.add(cube);
-
-
-
-    // const axes = new THREE.AxesHelper(5);
-    // scene.add(axes);
-
-    // const cMat = new THREE.MeshToonMaterial({color: "#FF0000"})
-    // const cGeom = new THREE.BoxGeometry(1, 1, 1);
-    // const cube = new THREE.Mesh(cGeom, cMat);
+    
+    // Generate our Rubik's cube
+    cubeSlices = CUBE.generateCube(scene);
+    
+    
+    // const cubeGeometry = new createBoxWithRoundedEdges(1, 1, 1, 0.04, 1);
+    // const cube = new THREE.Mesh(cubeGeometry, materials);
     // scene.add(cube);
 
-    // // Cube defaults
-    // cube.position.set(1, 1, 0);
-    
-    // new TWEEN.Tween()
+    const axes = new THREE.AxesHelper(5);
+    scene.add(axes);
+
 
 }
 
+/**
+ * Set up animations for TWEEN
+ */
 function animate() {
-
-    requestAnimationFrame(animate);
     
+    requestAnimationFrame(animate);
     TWEEN.update();
-
     renderer.render(scene, camera);
-
 }
 
 animate();

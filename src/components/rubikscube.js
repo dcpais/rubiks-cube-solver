@@ -26,9 +26,7 @@ export function rotate(axisPos, toRotate) {
         // https://discourse.threejs.org/t/camera-animation-
         // with-quaternion-travels-undesired-path/41147/5
         // Create a rotation Tween
-
     }
-
 }
 
 // Generate the Rubiks Cube
