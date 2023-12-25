@@ -85,22 +85,10 @@ function run() {
      *
      */
 
-    // Define the colors for each face of the cube
-    const colors = [
-        0xff0000, // Red
-        0x000000, // Green
-        0x0000ff, // Blue
-        0xffff00, // Yellow
-        0xff00ff, // Magenta
-        0x00ffff, // Cyan
-    ];
 
-    // Create an array of materials for each face
-    const materials = colors.map(color => new THREE.MeshStandardMaterial({ color }));
     
     // Generate our Rubik's cube
     cubeSlices = CUBE.generateCube(scene);
-    
     
     // const cubeGeometry = new createBoxWithRoundedEdges(1, 1, 1, 0.04, 1);
     // const cube = new THREE.Mesh(cubeGeometry, materials);

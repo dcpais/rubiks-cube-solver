@@ -8,6 +8,18 @@ const cubeLength = 0.8;
 const cubeGap = 0.05;
 const cubeDimensions = 3;
 const geometry = new THREE.BoxGeometry(cubeLength, cubeLength, cubeLength)
+// Define the colors for each face of the cube
+const colors = [
+    0xff0000, // Red
+    0x00ff00, // Green
+    0x0000ff, // Blue
+    0xffff00, // Yellow
+    0xff00ff, // Magenta
+    0x00ffff, // Cyan
+];
+
+// Create an array of materials for each face
+const materials = colors.map(color => new THREE.MeshStandardMaterial({ color }));
 
 // Get all axes of rotation
 export function rotate(axisPos, toRotate) {
@@ -36,14 +48,12 @@ export function generateCube(scene) {
     for (let i = 0; i < cubeDimensions; i++) {
         let slice = [];
         for (let j = 0; j < cubeDimensions; j++) {
-            const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
             for (let k = 0; k < cubeDimensions; k++) {
-                const newCube = new THREE.Mesh(geometry, material);
+                const newCube = new THREE.Mesh(geometry, materials);
                 let z = i * (cubeLength + cubeGap) - cubeLength - cubeGap;
                 let y = j * (cubeLength + cubeGap) - cubeLength - cubeGap;
                 let x = k * (cubeLength + cubeGap) - cubeLength - cubeGap;
                 newCube.position.set(x, y, z);
-                newCube.material.color = new THREE.Color("#" + Math.floor(Math.random()*16777215).toString(16))
                 slice.push(newCube);
                 scene.add(newCube);
             }
