@@ -1,15 +1,14 @@
-import * as THREE from 'three';
-import * as TWEEN from 'tween.js';
+import * as THREE from 'three'
+import * as TWEEN from 'tween.js'
 import * as CUBE from './components/rubikscube.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { TetrahedronBufferGeometry } from 'three';
-import { createBoxWithRoundedEdges } from './components/roundbox.js';
+import { TetrahedronBufferGeometry } from 'three'
 
 // Initialise the THREE main objects
-let scene, camera, renderer, controls;
+let scene, camera, renderer, controls
 
 // Initialise App State variables
-let cubeSlices, sceneLight, testObjs;
+let cubeSlices, sceneLight, testObjs
 
 // Default Settings
 const config = {
@@ -17,15 +16,12 @@ const config = {
     fov: 75,
 }
 
-initScene();
-animate();
-run();
 
 function initScene() {
 
     // Scene Setup
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(config.background_color);
+    scene = new THREE.Scene()
+    scene.background = new THREE.Color(config.background_color)
 
     // Camera Setup
     camera = new THREE.PerspectiveCamera(
@@ -33,40 +29,40 @@ function initScene() {
         window.innerWidth / window.innerHeight, 
         0.1, 
         1000
-    );
+    )
 
     // Renderer and Canvas setup in page
-    renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-    window.addEventListener('resize', onWindowResize, false);
+    renderer = new THREE.WebGLRenderer({antialias: true})
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    document.body.appendChild(renderer.domElement)
+    window.addEventListener('resize', onWindowResize, false)
     function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize( window.innerWidth, window.innerHeight );
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize( window.innerWidth, window.innerHeight )
     }
 
     // OrbitControls setup
     controls = new OrbitControls(
         camera, renderer.domElement
-    );
-    controls.minDistance = 4;
-    controls.maxDistance = 20;
+    )
+    controls.minDistance = 15
+    controls.maxDistance = 30
 
     // Key press event handler
-    window.addEventListener('keydown', (event) => onKeyPress(event));
+    window.addEventListener('keydown', (event) => onKeyPress(event))
     function onKeyPress(event) {
-        console.log("The following key was pressed: " + event.key);
-        CUBE.rotate(new THREE.Vector3(0, 0, 1), cubeSlices[0]);
+        console.log("The following key was pressed: " + event.key)
+        CUBE.rotate(new THREE.Vector3(0, 0, 1), cubeSlices[1])
     }    
 
     // Start settings
-    camera.position.z = 5;
-    sceneLight = new THREE.AmbientLight(0xffffff);
-    scene.add(sceneLight);
+    camera.position.z = 15
+    sceneLight = new THREE.AmbientLight(0xffffff)
+    scene.add(sceneLight)
 }
 
-function run() {
+async function run() {
     /**
      * TESTING AREA!!!!
      * 
@@ -82,32 +78,20 @@ function run() {
      * - Design a cube as 1 white cube with seperate
      *      objects representing the faces? will be 
      * - easier to keep track of for actual game logic?
-     *
      */
 
-
-    
-    // Generate our Rubik's cube
-    cubeSlices = CUBE.generateCube(scene);
-    
-    // const cubeGeometry = new createBoxWithRoundedEdges(1, 1, 1, 0.04, 1);
-    // const cube = new THREE.Mesh(cubeGeometry, materials);
-    // scene.add(cube);
-
-    const axes = new THREE.AxesHelper(5);
-    scene.add(axes);
-
+    let cubeMap = await CUBE.generateRubiksCube(scene)
+    console.log(cubeMap)
 
 }
 
-/**
- * Set up animations for TWEEN
- */
+// Animation Loop
 function animate() {
-    
-    requestAnimationFrame(animate);
-    TWEEN.update();
-    renderer.render(scene, camera);
+    requestAnimationFrame(animate)
+    TWEEN.update()
+    renderer.render(scene, camera)
 }
 
-animate();
+initScene()
+animate()
+await run()
