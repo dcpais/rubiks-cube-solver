@@ -1,12 +1,12 @@
 import * as THREE from 'three'
 import * as TWEEN from 'tween.js'
-import * as CUBE from './components/rubikscube.js'
+import { RubiksCube } from './components/rubikscube.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 /**
  * 
  */
-let scene, camera, renderer, controls, sceneLight, cubeMap
+let scene, camera, renderer, controls, sceneLight, rubiksCube
 
 /**
  * Set up the requirements for a THREE js scene
@@ -75,7 +75,8 @@ async function run() {
      *      objects representing the faces? will be 
      * - easier to keep track of for actual game logic?
      */
-    let cubeMap = await CUBE.generateRubiksCube(scene)
+    rubiksCube = new RubiksCube()
+    rubiksCube.generateRubiksCube(scene)
 }
 
 // Animation Loop
