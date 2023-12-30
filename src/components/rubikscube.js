@@ -1,11 +1,13 @@
 // Imports
 import * as THREE from 'three'
 import * as TWEEN from 'tween.js'
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
-// Get all axes of rotation
+/**
+ * 
+ * @param {Vector3} axisPos 
+ * @param {Array} toRotate 
+ */
 export function rotate(axisPos, toRotate) {
 
     if (TWEEN.getAll() != 0) {
@@ -34,42 +36,25 @@ export function rotate(axisPos, toRotate) {
     }
 }
 
+/**
+ * 
+ * @param {*} scene 
+ * @returns 
+ */
 async function importCube(scene) {
-
-    var gltfLoader = new GLTFLoader()
     let cube;
+    let gltfLoader = new GLTFLoader()
     await gltfLoader.loadAsync(
         './src/assets/rubiks_cube.gltf', undefined
-        
-    ).then((gltf) => {cube = gltf.scene; console.log(cube)})
+    ).then((gltf) => {cube = gltf.scene})
     return cube
 }
 
 // Generate the Rubiks Cube
 export async function generateRubiksCube(scene) {
-    
-    // Rubiks Cube Defaults
-    const cubeLength = 2
-    const cubeGap = 0.05
-    const cubeDimensions = 3
 
     let newCube = await importCube(scene)
-    // Generate full Rubiks Cube
-    // let cubeMap = {};
-    // for (let i = 0; i < cubeDimensions; i++) {
-    //     for (let j = 0; j < cubeDimensions; j++) {
-    //         for (let k = 0; k < cubeDimensions; k++) {
-    //             let newCube = await importCube(scene)
-    //             newCube = newCube.children[0]
-    //             let z = i * (cubeLength + cubeGap) - cubeLength - cubeGap
-    //             let y = j * (cubeLength + cubeGap) - cubeLength - cubeGap
-    //             let x = k * (cubeLength + cubeGap) - cubeLength - cubeGap
-    //             newCube.position.set(x, y, z)
-    //             cubeMap[1] = newCube
-    //             scene.add(newCube)
-    //         }
-    //     }
-    // }
+
     scene.add(newCube)
     let cubeMap
     return cubeMap
