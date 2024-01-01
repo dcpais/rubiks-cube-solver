@@ -49,13 +49,30 @@ function initScene() {
     window.addEventListener('keydown', (event) => onKeyPress(event))
     function onKeyPress(event) {
         console.log("The following key was pressed: " + event.key)
-        CUBE.rotate(new THREE.Vector3(0, 0, 1), cubeSlices[1])
+        rubiksCube.rotate("R1")
     }    
 
     // Start settings
     camera.position.z = 15
     sceneLight = new THREE.AmbientLight(0xffffff)
     scene.add(sceneLight)
+
+    // let geom = new THREE.BoxGeometry(1, 1, 1, 1)
+    
+    // let mat = new THREE.MeshPhongMaterial()
+    // let box = new THREE.Mesh(geom, mat)
+    // box.position.set(5, 0, 0)
+    // scene.add(box)
+    // let rotaxis = new THREE.Vector3(0, 0, 1)
+    // let tUpdate = (angle) => {
+    //     console.log("reached")
+    //     box.position.applyAxisAngle(rotaxis, Math.PI / 100)
+    //     let quat = new THREE.Quaternion()
+    //     quat.setFromAxisAngle(rotaxis, angle)
+    //     box.rotation.setFromQuaternion(quat)
+    //     setTimeout(() => {tUpdate(angle + Math.PI /100)}, 20)
+    // }
+    // setTimeout(tUpdate(Math.PI / 100), 1000)
 }
 
 async function run() {
@@ -76,7 +93,8 @@ async function run() {
      * - easier to keep track of for actual game logic?
      */
     rubiksCube = new RubiksCube()
-    rubiksCube.generateRubiksCube(scene)
+    await rubiksCube.generateRubiksCube(scene)
+    console.log(rubiksCube.cubeMap)
 }
 
 // Animation Loop
