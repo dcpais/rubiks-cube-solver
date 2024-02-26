@@ -49,22 +49,29 @@ export class RubiksCube {
 
         // const rotationAxis = this.cubeMap[cubesToRotate[4]].position.clone().normalize()
         const rotationAxis = new THREE.Vector3(1, 0, 0)
-        const rotationQ = new THREE.Quaternion()
-        rotationQ.setFromAxisAngle(rotationAxis, -1 * Math.PI / 2)
 
         for (let i = 0; i < cubesToRotate.length; i++) {
             let subCube = this.cubeMap[cubesToRotate[i]]
-            let timer = {t:0}
+            const start = { rotation: 0 }
+            const prev = { rotation: 0 }
+            const end = { rotation: Math.PI / 2 } 
 
-            new TWEEN.Tween(timer)
-                .to({t:1}, 1000) 
-                .onUpdate((timer) => {
-                    subCube.position.applyAxisAngle(rotationAxis, timer)
-                    subCube.rotateOnWorldAxis(rotationAxis, timer)
-                    console.log(subCube.rotation)
+            const tween = new TWEEN.Tween(start)
+                .to({rotation: Math.PI / 2}, 500)
+                .easing(TWEEN.Easing.Quadratic.Out) 
+                .onUpdate((rotation) => {
+                    //subCube.quaternion.multiply(rotationAxis, (q1))
+                    //subCube = subCube.rotateOnAxis(rotationAxis, (rotation - prev.rotation) * Math.PI / 2)
+                    //subCube.rotateOnWorldAxis(Math.Pi / 2);
+                    //console.log(prev)
+                    //prev.rotation = rotation
+                    subCube.position.applyAxisAngle(rotationAxis, rotation - prev.rotation)
+                    subCube.rotateOnWorldAxis(rotationAxis, rotation - prev.rotation)
+                    console.log(prev)
+                    prev.rotation = rotation - prev.rotation
                 })
-                .easing(TWEEN.Easing.Quadratic.Out)
-                .start()
+            
+            tween.start()
         }
     }
 
@@ -90,7 +97,6 @@ export class RubiksCube {
         this.cubeMap = {}
         for (let i = 0; i < 27; i++) {
             this.cubeMap[i] = this.cube["children"][i]
-            this.cubeMap[i].quaternion.set(0, 0, 0, 0)
         }      
         scene.add(this.cube)
     }
