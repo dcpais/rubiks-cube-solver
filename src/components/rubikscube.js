@@ -1,6 +1,6 @@
 // Imports
 import * as THREE from 'three'
-import * as TWEEN from 'tween.js'
+import * as TWEEN from '@tweenjs/tween.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
 export class RubiksCube {
@@ -39,36 +39,30 @@ export class RubiksCube {
      * 
      * @param {String} rotation
      */
-    rotate(rotation) {
+    rotate(rotationGroup, ) {
 
         // Don't execute if currently rotating
         if (TWEEN.getAll() != 0) {return}
         
         // Quaternion rotation of cube
-        const cubesToRotate = RubiksCube.ROTATIONS[rotation]
+        const cubesToRotate = RubiksCube.ROTATIONS[rotationGroup]
 
         // const rotationAxis = this.cubeMap[cubesToRotate[4]].position.clone().normalize()
         const rotationAxis = new THREE.Vector3(1, 0, 0)
 
         for (let i = 0; i < cubesToRotate.length; i++) {
             let subCube = this.cubeMap[cubesToRotate[i]]
-            const start = { rotation: 0 }
-            const prev = { rotation: 0 }
-            const end = { rotation: Math.PI / 2 } 
+            let start = { rotation: 0 }
+            let prev = { rotation: 0 }
+            let end = { rotation: Math.PI / 2 } 
 
             const tween = new TWEEN.Tween(start)
-                .to({rotation: Math.PI / 2}, 500)
+                .to(end, animationTime)
                 .easing(TWEEN.Easing.Quadratic.Out) 
-                .onUpdate((rotation) => {
-                    //subCube.quaternion.multiply(rotationAxis, (q1))
-                    //subCube = subCube.rotateOnAxis(rotationAxis, (rotation - prev.rotation) * Math.PI / 2)
-                    //subCube.rotateOnWorldAxis(Math.Pi / 2);
-                    //console.log(prev)
-                    //prev.rotation = rotation
-                    subCube.position.applyAxisAngle(rotationAxis, rotation - prev.rotation)
-                    subCube.rotateOnWorldAxis(rotationAxis, rotation - prev.rotation)
-                    console.log(prev)
-                    prev.rotation = rotation - prev.rotation
+                .onUpdate((obj) => {
+                    subCube.position.applyAxisAngle(rotationAxis, obj.rotation - prev.rotation)
+                    subCube.rotateOnWorldAxis(rotationAxis, obj.rotation - prev.rotation)
+                    prev.rotation = obj.rotation
                 })
             
             tween.start()
