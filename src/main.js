@@ -136,7 +136,7 @@ function onMouseDown(event) {
     pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1
     
     raycaster.setFromCamera(pointer, camera)
-    const intersects = raycaster.intersectObjects( scene.children )
+    const intersects = raycaster.intersectObjects(scene.children)
 
     // If no intersection, we exit
     if (intersects.length == 0) { 
@@ -144,10 +144,7 @@ function onMouseDown(event) {
     }
 
     controls.enabled = false
-    let hoveredCube = intersects[0].object.parent
-    selectedObjects = []
-    selectedObjects.push(hoveredCube)
-    outlinePass.selectedObjects = selectedObjects
+    mouseDownPos = pointer
 
 }  
 
