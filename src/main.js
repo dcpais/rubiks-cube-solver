@@ -3,15 +3,19 @@ import * as TWEEN from '@tweenjs/tween.js'
 import { RubiksCube } from './components/rubikscube.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
+import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js'
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js'
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 
 /**
  * Globals
  */
 let scene, camera, renderer, controls;
-let composer, outlinePass, renderPass;
+let composer, outlinePass, renderPass, effectFXAA, outputPass;
 let sceneLight, rubiksCube, selectedObjects;
+let mouseDownPos, mouseUpPos;
 
 /**
  * Set up the requirements for a THREE js scene
@@ -52,6 +56,7 @@ function initScene() {
 
     // Event listeners
     window.addEventListener('mousedown', (event) => onMouseDown(event))
+    window.addEventListener('mouseup', (event) => onMouseUp(event))
 
     // Start settings
     camera.position.z = 15
@@ -61,22 +66,6 @@ function initScene() {
 }
 
 async function run() {
-    /**
-     * TESTING AREA!!!!
-     * 
-     * Working on getting the cube rotation and
-     * face colours implemented correctly
-     * before applying to all the cubes. 
-     * 
-     * Will also plan out how the rotation axes 
-     * will be laid out, as well as the cubes of each
-     * face.
-     * 
-     * PLAN: 
-     * - Design a cube as 1 white cube with seperate
-     *      objects representing the faces? will be 
-     * - easier to keep track of for actual game logic?
-     */
 
     // const axesHelper = new THREE.AxesHelper( 5 );
     // scene.add( axesHelper );
@@ -97,6 +86,7 @@ async function run() {
  */
 function initPostprocessing() {
 
+    // Initialize Post Process effects + composer
     composer = new EffectComposer(renderer)
     renderPass = new RenderPass(scene, camera)
     outlinePass = new OutlinePass(
@@ -104,18 +94,33 @@ function initPostprocessing() {
         scene, 
         camera
     )
-    outlinePass.renderToScreen = true
+    outputPass = new OutputPass()
+    effectFXAA = new ShaderPass(FXAAShader);
+
+    // Set up AntiAliasing effect
+    // USEFUL LINK TO FIX EDGE ROUGHNESS
+    // https://discourse.threejs.org/t/outlinepass-for-child-meshes/15063/3
+    const pixelratio = renderer.getPixelRatio()
+    effectFXAA.uniforms['resolution'].value.set(
+        1 / window.innerWidth, 
+        1 / window.innerHeight
+    )
+    
+    // Outline effect settings
     selectedObjects = []
+    outlinePass.renderToScreen = true
     outlinePass.selectedObjects = selectedObjects
-
-    composer.addPass(renderPass)
-    composer.addPass(outlinePass)
-
     outlinePass.edgeStrength = 2
     outlinePass.edgeGlow = 2
     outlinePass.visibleEdgeColor.set(0xffffff)
     outlinePass.hiddenEdgeColor.set(0xffffff)
 
+    // Post process order
+    composer.setSize(window.innerWidth, window.innerHeight)
+    composer.addPass(renderPass)
+    composer.addPass(outlinePass)
+    composer.addPass(outputPass)
+    composer.addPass(effectFXAA)
 }
 
 /**
@@ -132,18 +137,23 @@ function onMouseDown(event) {
     
     raycaster.setFromCamera(pointer, camera)
     const intersects = raycaster.intersectObjects( scene.children )
-    if (intersects.length == 0) { return } // If no intersection
+
+    // If no intersection, we exit
+    if (intersects.length == 0) { 
+        return 
+    }
 
     controls.enabled = false
-    let hoveredCube = intersects[0].object
+    let hoveredCube = intersects[0].object.parent
     selectedObjects = []
     selectedObjects.push(hoveredCube)
     outlinePass.selectedObjects = selectedObjects
-    console.log(outlinePass.selectedObjects)
-    console.log(composer.passes)
 
-    controls.enabled = true
 }  
+
+function onMouseUp(event) {
+    controls.enabled = true
+}
 
 /**
  * Animation Loop
@@ -152,7 +162,7 @@ function animate() {
     requestAnimationFrame(animate)
     TWEEN.update()
     renderer.render(scene, camera)
-    composer.render()
+    // composer.render()
     controls.update()
     
 }
