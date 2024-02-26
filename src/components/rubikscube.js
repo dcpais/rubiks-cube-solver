@@ -89,9 +89,25 @@ export class RubiksCube {
 
         await this.importCube(scene)
         this.cubeMap = {}
+        let materials = {}
         for (let i = 0; i < 27; i++) {
+            let currentCube = this.cube["children"][i]
+
+            // For each cube, we must clone from the 7 materials
+            // in the rubiks cube to make sure each has its 
+            // own unique copy (for making cubes transparent)
+            for (let j = 0; j < currentCube.children.length; j++) {
+                let mesh = currentCube.children[j]
+                if (!(mesh.material.uuid in materials)) {
+                    materials[mesh.material.uuid] = mesh.material
+                }
+                mesh.material = materials[mesh.material.uuid].clone()
+            }
+            
+            // Finally, add the cube to the cubeMap
             this.cubeMap[i] = this.cube["children"][i]
         }      
         scene.add(this.cube)
+        console.log(this.cubeMap)
     }
 }
