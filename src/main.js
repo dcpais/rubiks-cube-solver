@@ -15,7 +15,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 let scene, camera, renderer, controls;
 let composer, outlinePass, renderPass, effectFXAA, outputPass;
 let sceneLight, rubiksCube, selectedObjects;
-let mouseDownPos, mouseUpPos;
+let mouseDownPos, mouseUpPos, hoveredPlane;
 
 /**
  * Set up the requirements for a THREE js scene
@@ -123,32 +123,41 @@ function initPostprocessing() {
     composer.addPass(effectFXAA)
 }
 
+function getMousePos(event, raycaster) {
+    let pointer = new THREE.Vector2()
+    pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1
+    pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1
+    return pointer
+}
+
 /**
  * 
  * @param {*} event 
  * @returns 
  */
 function onMouseDown(event) {
-    let pointer = new THREE.Vector2()
     let raycaster = new THREE.Raycaster()
-
-    pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1
-    pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1
+    let pointer = getMousePos(event, raycaster)
     
     raycaster.setFromCamera(pointer, camera)
     const intersects = raycaster.intersectObjects(scene.children)
 
     // If no intersection, we exit
-    if (intersects.length == 0) { 
-        return 
+    if (intersects.length > 0) { 
+        controls.enabled = false
+        mouseDownPos = pointer
+        hoveredPlane = intersects[0].normal
     }
-
-    controls.enabled = false
-    mouseDownPos = pointer
-
 }  
 
 function onMouseUp(event) {
+    let pointer = getMousePos(event)
+    mouseUpPos = pointer
+    const dragScreenSpace = mouseDownPos - mouseUpPos
+    const dragDirection = new THREE.Vector3(dragScreenSpace.x, dragScreenSpace.y, 1)
+    const projection = dragDirection.projectOnPlane(hoveredPlane)
+    console.log(projection)
+
     controls.enabled = true
 }
 
