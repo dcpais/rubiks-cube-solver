@@ -154,9 +154,7 @@ function onMouseDown(event) {
         planeVis = new THREE.PlaneHelper(targetFacePlane, 5, 0x000000)
         scene.add(planeVis)
         mouseDownPos = new THREE.Vector3()
-        console.log(intersects[0])
         mouseDownPos.copy(intersects[0].point)
-        console.log(mouseDownPos)
 
     }
 }  
@@ -175,7 +173,12 @@ function onMouseUp(event) {
         ray.intersectPlane(targetFacePlane, mouseUpPos)
         console.log(mouseUpPos)
         console.log("diff")
-        console.log(mouseUpPos.sub(mouseDownPos))
+        let dragDirection = mouseUpPos.sub(mouseDownPos)
+        if (dragDirection.length() > 0.5) { 
+            dragDirection.normalize()
+            let directionIndex = getPrimaryDirection(dragDirection)
+
+        }
         setTimeout(() => {planeVis.removeFromParent()}, 5000)
 
     }
@@ -184,6 +187,28 @@ function onMouseUp(event) {
     toggleControls()
     
     
+}
+
+// Get the primaryDirection's index
+function getPrimaryDirection(vec) {
+    let index = 0
+    let largest = -Infinity
+    let current;
+    for (let i = 0; i < 3; i++) {
+        current = Math.abs(vec.getComponent(i))
+        if (current > largest) {
+            index = i 
+            largest = current
+        }
+    }
+
+    return index
+}
+
+function getRotationAxisFromIndex(vec, index) {
+    let rotationAxis = new THREE.Vector3(0, 0, 0)
+    rotationAxis.setComponent(index, vec.getComponent(index))
+    return rotationAxis.normalize()
 }
 
 /**
