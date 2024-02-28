@@ -131,6 +131,7 @@ function getMousePos(event) {
     return pointer
 }
 
+let planeVis;
 /**
  * 
  * @param {*} event 
@@ -140,16 +141,22 @@ function onMouseDown(event) {
     let pointer = getMousePos(event)
     
     raycaster.setFromCamera(pointer, camera)
-    let intersects = raycaster.intersectObjects(scene.children)
+    let intersects = raycaster.intersectObjects(rubiksCube.cubeArray)
 
     // If no intersection, we exit
     if (intersects.length > 0) { 
         toggleControls()
         isDragging = true
         // Might need to add hitboxes to work effectively!
-        targetFacePlane = new THREE.Plane(intersects[0].normal)
+        targetFacePlane = new THREE.Plane(
+            intersects[0].normal, -intersects[0].point.length()
+        )
+        planeVis = new THREE.PlaneHelper(targetFacePlane, 5, 0x000000)
+        scene.add(planeVis)
+        mouseDownPos = new THREE.Vector3()
         console.log(intersects[0])
-        mouseDownPos = intersects[0].point
+        mouseDownPos.copy(intersects[0].point)
+        console.log(mouseDownPos)
 
     }
 }  
@@ -159,18 +166,23 @@ function toggleControls() {
 }
 
 function onMouseUp(event) {
-    if (!isDragging) { 
+    if (isDragging) { 
         let pointer = getMousePos(event)
 
         raycaster.setFromCamera(pointer, camera)
         let ray = raycaster.ray
-        console.log(targetFacePlane)
-        ray.intersectsPlane(targetFacePlane, mouseUpPos)
+        mouseUpPos = new THREE.Vector3()
+        ray.intersectPlane(targetFacePlane, mouseUpPos)
         console.log(mouseUpPos)
+        console.log("diff")
+        console.log(mouseUpPos.sub(mouseDownPos))
+        setTimeout(() => {planeVis.removeFromParent()}, 5000)
+
     }
 
-    toggleControls()
     isDragging = false
+    toggleControls()
+    
     
 }
 

@@ -32,7 +32,7 @@ export class RubiksCube {
     RubiksCube () {
         this.cubeMap = undefined 
         this.cube = undefined
-        
+        this.cubeArray = []
     }
 
     /**
@@ -108,6 +108,8 @@ export class RubiksCube {
             this.cubeMap[i] = this.cube["children"][i]
         }      
         scene.add(this.cube)
+        this.cubeArray = Object.values(this.cubeMap)
+        console.log(this.cubeArray)
         console.log(this.cubeMap)
     }
 }
