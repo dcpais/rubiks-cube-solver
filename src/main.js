@@ -177,7 +177,11 @@ function onMouseUp(event) {
         if (dragDirection.length() > 0.5) { 
             dragDirection.normalize()
             let directionIndex = getPrimaryDirection(dragDirection)
-
+            dragDirection = getRotationAxisFromIndex(
+                dragDirection, 
+                directionIndex
+            )
+            console.log(dragDirection)
         }
         setTimeout(() => {planeVis.removeFromParent()}, 5000)
 
