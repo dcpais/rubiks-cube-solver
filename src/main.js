@@ -12,10 +12,10 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 /**
  * Globals
  */
-let scene, camera, renderer, controls;
+let scene, camera, renderer, controls, raycaster;
 let composer, outlinePass, renderPass, effectFXAA, outputPass;
 let sceneLight, rubiksCube, selectedObjects;
-let mouseDownPos, mouseUpPos, hoveredPlane;
+let mouseDownPos, mouseUpPos, targetFacePlane, isDragging;
 
 /**
  * Set up the requirements for a THREE js scene
@@ -25,6 +25,7 @@ function initScene() {
     // Scene Setup
     scene = new THREE.Scene()
     scene.background = new THREE.Color("#F5F5F5") // Background colour
+    raycaster = new THREE.Raycaster()
 
     // Camera Setup
     camera = new THREE.PerspectiveCamera(
@@ -123,7 +124,7 @@ function initPostprocessing() {
     composer.addPass(effectFXAA)
 }
 
-function getMousePos(event, raycaster) {
+function getMousePos(event) {
     let pointer = new THREE.Vector2()
     pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1
     pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1
@@ -136,29 +137,41 @@ function getMousePos(event, raycaster) {
  * @returns 
  */
 function onMouseDown(event) {
-    let raycaster = new THREE.Raycaster()
-    let pointer = getMousePos(event, raycaster)
+    let pointer = getMousePos(event)
     
     raycaster.setFromCamera(pointer, camera)
-    const intersects = raycaster.intersectObjects(scene.children)
+    let intersects = raycaster.intersectObjects(scene.children)
 
     // If no intersection, we exit
     if (intersects.length > 0) { 
-        controls.enabled = false
-        mouseDownPos = pointer
-        hoveredPlane = intersects[0].normal
+        toggleControls()
+        isDragging = true
+        // Might need to add hitboxes to work effectively!
+        targetFacePlane = new THREE.Plane(intersects[0].normal)
+        console.log(intersects[0])
+        mouseDownPos = intersects[0].point
+
     }
 }  
 
-function onMouseUp(event) {
-    let pointer = getMousePos(event)
-    mouseUpPos = pointer
-    const dragScreenSpace = mouseDownPos - mouseUpPos
-    const dragDirection = new THREE.Vector3(dragScreenSpace.x, dragScreenSpace.y, 1)
-    const projection = dragDirection.projectOnPlane(hoveredPlane)
-    console.log(projection)
+function toggleControls() {
+    controls.enabled = !controls.enabled 
+}
 
-    controls.enabled = true
+function onMouseUp(event) {
+    if (!isDragging) { 
+        let pointer = getMousePos(event)
+
+        raycaster.setFromCamera(pointer, camera)
+        let ray = raycaster.ray
+        console.log(targetFacePlane)
+        ray.intersectsPlane(targetFacePlane, mouseUpPos)
+        console.log(mouseUpPos)
+    }
+
+    toggleControls()
+    isDragging = false
+    
 }
 
 /**
