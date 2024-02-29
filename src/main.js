@@ -164,37 +164,37 @@ function toggleControls() {
 }
 
 function onMouseUp(event) {
-    if (isDragging) { 
-        let pointer = getMousePos(event)
+    if (!isDragging) { return }
+    let pointer = getMousePos(event)
 
-        raycaster.setFromCamera(pointer, camera)
-        let ray = raycaster.ray
-        mouseUpPos = new THREE.Vector3()
-        ray.intersectPlane(targetFacePlane, mouseUpPos)
-        console.log(mouseUpPos)
-        console.log("diff")
-        let dragDirection = mouseUpPos.sub(mouseDownPos)
-        if (dragDirection.length() > 0.5) { 
-            dragDirection.normalize()
-            let directionIndex = getPrimaryDirection(dragDirection)
-            dragDirection = getRotationAxisFromIndex(
-                dragDirection, 
-                directionIndex
-            )
-            console.log(dragDirection)
-        }
-        setTimeout(() => {planeVis.removeFromParent()}, 5000)
+    raycaster.setFromCamera(pointer, camera)
+    let ray = raycaster.ray
+    mouseUpPos = new THREE.Vector3()
+    ray.intersectPlane(targetFacePlane, mouseUpPos)
+    //console.log(mouseUpPos)
+    //console.log("diff")
+    let dragDirection = mouseUpPos.sub(mouseDownPos)
+    if (dragDirection.length() > 0.5) { 
+        dragDirection.normalize()
+        // Primary axis of drag
+        dragDirection = getPrimaryAxisVector(dragDirection)
+        // Primary axis of selection plane
+        let selectionPlane = getPrimaryAxisVector(targetFacePlane.normal)
+        // Determine Axis of rotation + sign
+        let rotationAxis = new THREE.Vector3()
+        rotationAxis.crossVectors(dragDirection, selectionPlane)
+        
 
     }
 
+    setTimeout(() => {planeVis.removeFromParent()}, 5000)
     isDragging = false
+    
     toggleControls()
-    
-    
 }
 
-// Get the primaryDirection's index
-function getPrimaryDirection(vec) {
+
+function getPrimaryAxisVector(vec) {
     let index = 0
     let largest = -Infinity
     let current;
@@ -205,11 +205,6 @@ function getPrimaryDirection(vec) {
             largest = current
         }
     }
-
-    return index
-}
-
-function getRotationAxisFromIndex(vec, index) {
     let rotationAxis = new THREE.Vector3(0, 0, 0)
     rotationAxis.setComponent(index, vec.getComponent(index))
     return rotationAxis.normalize()
