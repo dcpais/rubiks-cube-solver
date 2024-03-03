@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
-import { RubiksCube } from './components/rubikscube.js'
+import { RubiksCube } from './components/RubiksCube.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
@@ -13,9 +13,9 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
  * Globals
  */
 let scene, camera, renderer, controls, raycaster;
-let composer, outlinePass, renderPass, effectFXAA, outputPass;
-let sceneLight, rubiksCube, selectedObjects;
-let mouseDownPos, mouseUpPos, targetFacePlane, isDragging;
+let composer, outlinePass, renderPass, effectFXAA, outputPass, selectedObjects;
+let sceneLight, rubiksCube;
+let mouseDownPos, mouseUpPos, targetFacePlane, isDragging, selectedCube;
 
 /**
  * Set up the requirements for a THREE js scene
@@ -151,8 +151,9 @@ function onMouseDown(event) {
         targetFacePlane = new THREE.Plane(
             intersects[0].normal, -intersects[0].point.length()
         )
+        selectedCube = intersects[0].object.parent
         planeVis = new THREE.PlaneHelper(targetFacePlane, 5, 0x000000)
-        scene.add(planeVis)
+        //scene.add(planeVis)
         mouseDownPos = new THREE.Vector3()
         mouseDownPos.copy(intersects[0].point)
 
@@ -171,8 +172,7 @@ function onMouseUp(event) {
     let ray = raycaster.ray
     mouseUpPos = new THREE.Vector3()
     ray.intersectPlane(targetFacePlane, mouseUpPos)
-    //console.log(mouseUpPos)
-    //console.log("diff")
+
     let dragDirection = mouseUpPos.sub(mouseDownPos)
     if (dragDirection.length() > 0.5) { 
         dragDirection.normalize()
@@ -183,7 +183,9 @@ function onMouseUp(event) {
         // Determine Axis of rotation + sign
         let rotationAxis = new THREE.Vector3()
         rotationAxis.crossVectors(dragDirection, selectionPlane)
-        
+        console.log(selectedCube.name)
+        //rubiksCube.doRotation(rotationAxis, )
+
 
     }
 

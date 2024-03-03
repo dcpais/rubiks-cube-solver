@@ -10,7 +10,7 @@ export class RubiksCube {
      * (sub-cubes are numbered 0-26 going left to right, 
      * bottom to top going z forward in the xy plane)
      */
-    static ROTATIONS = {
+    static ROTATION_GROUPS = {
         "R1": [0, 1, 2, 3, 4, 5, 6, 7, 8], // Front Face (xy plane)
         "R2": [9, 10, 11, 12, 13, 14, 15, 16, 17], // Middle Slice (xy plane)
         "R3": [18, 19, 20, 21, 22, 23, 24, 25, 26], // Back Face (xy plane)
@@ -22,8 +22,8 @@ export class RubiksCube {
         "R9": [0, 9, 18, 3, 12, 21, 6, 15, 24] // Back Face (yz plane)
     }
 
-    static STABILIZERS = {
-        // Will set this up later
+    static TRANSLATIONS = {
+        
     }
 
     /**
@@ -33,22 +33,28 @@ export class RubiksCube {
         this.cubeMap = undefined 
         this.cube = undefined
         this.cubeArray = []
+        this.cubeView = [
+            [[0, 1, 2], [3, 4, 5], [6, 7, 8]], // Front Face (xy plane)
+            [[9, 10, 11], [12, 13, 14], [15, 16, 17]], // Middle Face (xy plane)
+            [[18, 19, 20], [21, 22, 23], [24, 25, 26]] // Back Face (xy plane)
+        ]
+
     }
 
     /**
      * 
      * @param {String} rotation
      */
-    rotate(rotationGroup, ) {
+    doRotation(rotationAxis, selectedCube, animationTime) {
 
         // Don't execute if currently rotating
         if (TWEEN.getAll() != 0) {return}
         
-        // Quaternion rotation of cube
-        const cubesToRotate = RubiksCube.ROTATIONS[rotationGroup]
+        // Determine rotation group
+        
 
-        // const rotationAxis = this.cubeMap[cubesToRotate[4]].position.clone().normalize()
-        const rotationAxis = new THREE.Vector3(1, 0, 0)
+        // Quaternion rotation of cube
+        const cubesToRotate = RubiksCube.ROTATION_GROUPS[rotationGroup]
 
         for (let i = 0; i < cubesToRotate.length; i++) {
             let subCube = this.cubeMap[cubesToRotate[i]]
@@ -105,6 +111,8 @@ export class RubiksCube {
             }
             
             // Finally, add the cube to the cubeMap
+            let current = this.cube["children"][i]
+            current.name = i
             this.cubeMap[i] = this.cube["children"][i]
         }      
         scene.add(this.cube)
